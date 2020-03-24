@@ -17,6 +17,7 @@ namespace MasterLock.Entities
         {
 
         }
+        public DbSet<Product> Products { get; set; }
         //public DbSet<Consumer> Consumers { get; set; }
         // public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 
