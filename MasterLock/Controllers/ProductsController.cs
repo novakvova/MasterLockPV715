@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MasterLock.DTO;
 using MasterLock.Entities;
@@ -34,6 +35,7 @@ namespace MasterLock.Controllers
                 price = p.Price.ToString(),
                 url = p.Image
             }).ToList();
+            Thread.Sleep(2000);
 
             return Ok(model);
         }
