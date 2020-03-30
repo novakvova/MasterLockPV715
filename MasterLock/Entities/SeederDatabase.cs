@@ -21,8 +21,9 @@ namespace MasterLock.Entities
                 var manager = scope.ServiceProvider.GetRequiredService<UserManager<DbUser>>();
                 var managerRole = scope.ServiceProvider.GetRequiredService<RoleManager<DbRole>>();
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                SeedNewUsers(context);
+                //SeedNewUsers(context);
                 SeedProduct(context);
+                SeedUsers(manager, managerRole);
             }
         }
         private static void SeedNewUsers(ApplicationDbContext context)
@@ -59,6 +60,12 @@ namespace MasterLock.Entities
                 {
                     Email = email,
                     UserName = email,
+                    Name = "Nikita",
+                    Surname = "Kaida",
+                    Country = "Ukraine",
+                    City = "Rivne",
+                    Age = "18",
+                    Url = "http://st03.kakprosto.ru//images/article/2018/10/30/340157_5bd89b73dec2d5bd89b73dec67.jpeg",
                     PhoneNumber = "+11(111)111-11-11"
                 };
                 var result = userManager.CreateAsync(user, "Qwerty1-").Result;
