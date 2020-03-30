@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MasterLock.Entities
+namespace MasterLock.DTO
 {
-    public class DbUser : IdentityUser<long>
+    public class UserDTO
     {
         public string Name { get; set; }
         public string Surname { get; set; }
@@ -14,6 +13,5 @@ namespace MasterLock.Entities
         public string City { get; set; }
         public string Age { get; set; }
         public string Url { get; set; }
-        public ICollection<DbUserRole> UserRoles { get; set; }
     }
 }
