@@ -109,7 +109,7 @@ namespace MasterLock
             {
                 endpoints.MapControllers();
             });
-
+           
             //SeederDatabase.SeedData(app.ApplicationServices, env, Configuration);
         }
     }

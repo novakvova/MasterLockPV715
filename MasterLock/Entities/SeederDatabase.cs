@@ -21,12 +21,27 @@ namespace MasterLock.Entities
                 var manager = scope.ServiceProvider.GetRequiredService<UserManager<DbUser>>();
                 var managerRole = scope.ServiceProvider.GetRequiredService<RoleManager<DbRole>>();
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                SeedUsers(manager, managerRole);
+                //SeedNewUsers(context);
                 SeedProduct(context);
+                SeedUsers(manager, managerRole);
             }
         }
+        private static void SeedNewUsers(ApplicationDbContext context)
+        {
+            var user = new DbUser
+            {
+                Name = "Nikita",
+                Surname = "Kaida",
+                Country = "Ukraine",
+                City = "Rivne",
+                Age = "18",
+                Url = "http://st03.kakprosto.ru//images/article/2018/10/30/340157_5bd89b73dec2d5bd89b73dec67.jpeg"
+            };
+            context.Users.Add(user);
+            context.SaveChanges();
+        }
 
-        private static void SeedUsers(UserManager<DbUser> userManager,
+            private static void SeedUsers(UserManager<DbUser> userManager,
             RoleManager<DbRole> roleManager)
         {
             var roleName = "Admin";
@@ -45,6 +60,12 @@ namespace MasterLock.Entities
                 {
                     Email = email,
                     UserName = email,
+                    Name = "Nikita",
+                    Surname = "Kaida",
+                    Country = "Ukraine",
+                    City = "Rivne",
+                    Age = "18",
+                    Url = "http://st03.kakprosto.ru//images/article/2018/10/30/340157_5bd89b73dec2d5bd89b73dec67.jpeg",
                     PhoneNumber = "+11(111)111-11-11"
                 };
                 var result = userManager.CreateAsync(user, "Qwerty1-").Result;
