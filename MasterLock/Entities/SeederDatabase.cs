@@ -26,22 +26,7 @@ namespace MasterLock.Entities
                 SeedUsers(manager, managerRole);
             }
         }
-        private static void SeedNewUsers(ApplicationDbContext context)
-        {
-            var user = new DbUser
-            {
-                Name = "Nikita",
-                Surname = "Kaida",
-                Country = "Ukraine",
-                City = "Rivne",
-                Age = "18",
-                Url = "http://st03.kakprosto.ru//images/article/2018/10/30/340157_5bd89b73dec2d5bd89b73dec67.jpeg"
-            };
-            context.Users.Add(user);
-            context.SaveChanges();
-        }
-
-            private static void SeedUsers(UserManager<DbUser> userManager,
+        private static void SeedUsers(UserManager<DbUser> userManager,
             RoleManager<DbRole> roleManager)
         {
             var roleName = "Admin";

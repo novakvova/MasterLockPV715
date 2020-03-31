@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Bogus;
 using MasterLock.DTO;
 using MasterLock.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -23,14 +24,6 @@ namespace MasterLock.Controllers
         }
         public IActionResult GetAll()
         {
-            //List<ProductDTO> model = new List<ProductDTO>() {
-
-            //    new ProductDTO{
-            //        title = "Salo",
-            //        price = "99999",
-            //        url = "http://10.0.2.2/android/1.jpg"
-            //    }
-            //};
             var model = _context.Products.Select(p => new ProductDTO
             {
                 title = p.Name,
@@ -40,6 +33,33 @@ namespace MasterLock.Controllers
             Thread.Sleep(2000);
 
             return Ok(model);
+        }
+        [HttpPost("create")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create([FromBody]ProductCreateDTO model)
+        {
+            
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(new
+                {
+                    invalid = "Не валідна модель"
+                });
+            }
+            var faker = new Faker();
+            Product product = new Product
+            {
+                Name = model.title,
+                Image = faker.Image.PicsumUrl(400, 400, false, false, null),
+                Price = Double.Parse(model.price)
+            };
+            _context.Products.Add(product);
+            
+            return Ok(
+            new
+            {
+                id = product.Id
+            });
         }
 
     }
