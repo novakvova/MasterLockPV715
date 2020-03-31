@@ -51,10 +51,11 @@ namespace MasterLock.Controllers
             {
                 Name = model.title,
                 Image = faker.Image.PicsumUrl(400, 400, false, false, null),
-                Price = Double.Parse(model.price)
+                Price = Double.Parse(model.price),
+                Description="Капець"
             };
             _context.Products.Add(product);
-            
+            _context.SaveChanges();
             return Ok(
             new
             {
