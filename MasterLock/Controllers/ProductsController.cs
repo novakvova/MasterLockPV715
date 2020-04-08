@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,8 +10,10 @@ using Bogus;
 using MasterLock.DTO;
 using MasterLock.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace MasterLock.Controllers
 {
@@ -18,17 +23,25 @@ namespace MasterLock.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        public ProductsController(ApplicationDbContext context)
+        private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration _configuration;
+
+        public ProductsController(ApplicationDbContext context,
+            IConfiguration configuration,
+            IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
+            _configuration = configuration;
         }
         public IActionResult GetAll()
         {
+            string domain = (string)_configuration.GetValue<string>("BackendDomain");
             var model = _context.Products.Select(p => new ProductDTO
             {
                 title = p.Name,
                 price = p.Price.ToString(),
-                url = p.Image
+                url = $"{domain}android/{p.Image}"
             }).ToList();
             Thread.Sleep(2000);
 
@@ -46,12 +59,53 @@ namespace MasterLock.Controllers
                     invalid = "Не валідна модель"
                 });
             }
-            var faker = new Faker();
+            double price=0.0;
+            try
+            {
+                price=Double.Parse(model.price);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new
+                {
+                    invalid = "Формат ціни 0.0"
+                });
+            }
+
+            var imageName = Path.GetRandomFileName() + ".jpg";
+            string savePath = _env.ContentRootPath;
+            string folderImage = "images";
+            savePath = Path.Combine(savePath, folderImage);
+            savePath = Path.Combine(savePath, imageName);
+            
+            try
+            {
+                byte[] byteBuffer = Convert.FromBase64String(model.imageBase64);
+                using (MemoryStream memoryStream = new MemoryStream(byteBuffer))
+                {
+                    memoryStream.Position = 0;
+                    using (Image imgReturn = Image.FromStream(memoryStream))
+                    {
+                        memoryStream.Close();
+                        byteBuffer = null;
+                        var bmp = new Bitmap(imgReturn);
+                        bmp.Save(savePath, ImageFormat.Jpeg);
+                    }
+                }
+            }
+            catch
+            {
+                return BadRequest(new
+                {
+                    invalid = "Помилка обробки фото"
+                });
+            }
+
             Product product = new Product
             {
                 Name = model.title,
-                Image = faker.Image.PicsumUrl(400, 400, false, false, null),
-                Price = Double.Parse(model.price),
+                Image = imageName,
+                Price = price,
                 Description="Капець"
             };
             _context.Products.Add(product);

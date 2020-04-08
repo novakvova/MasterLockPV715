@@ -22,7 +22,7 @@ namespace MasterLock.Entities
                 var managerRole = scope.ServiceProvider.GetRequiredService<RoleManager<DbRole>>();
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 //SeedNewUsers(context);
-                SeedProduct(context);
+                //SeedProduct(context);
                 SeedUsers(manager, managerRole);
             }
         }
