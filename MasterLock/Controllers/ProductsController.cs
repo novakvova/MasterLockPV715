@@ -39,6 +39,7 @@ namespace MasterLock.Controllers
             string domain = (string)_configuration.GetValue<string>("BackendDomain");
             var model = _context.Products.Select(p => new ProductDTO
             {
+                id=p.Id,
                 title = p.Name,
                 price = p.Price.ToString(),
                 url = $"{domain}android/{p.Image}"
@@ -47,6 +48,7 @@ namespace MasterLock.Controllers
 
             return Ok(model);
         }
+        
         [HttpPost("create")]
         [Authorize(Roles = "Admin")]
         public IActionResult Create([FromBody]ProductCreateDTO model)
@@ -115,6 +117,37 @@ namespace MasterLock.Controllers
             {
                 id = product.Id
             });
+        }
+
+        [HttpDelete("delete/{id}")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Delete(int id)
+        {
+            var p =_context.Products.SingleOrDefault(p => p.Id == id);
+            if (p!=null)
+            {
+                var imageName = p.Name;
+                string savePath = _env.ContentRootPath;
+                string folderImage = "images";
+                savePath = Path.Combine(savePath, folderImage);
+                savePath = Path.Combine(savePath, imageName);
+                if(System.IO.File.Exists(savePath))
+                {
+                    System.IO.File.Delete(savePath);
+                }
+                _context.Products.Remove(p);
+                _context.SaveChanges();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    invalid = "Такого продукта немає!"
+                });
+            }
+
+            
         }
 
     }
