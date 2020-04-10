@@ -119,6 +119,8 @@ namespace MasterLock.Controllers
             });
         }
 
+
+
         [HttpDelete("delete/{id}")]
         [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
@@ -148,6 +150,98 @@ namespace MasterLock.Controllers
             }
 
             
+        }
+
+
+        [HttpGet("edit/{id}")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Edit([FromRoute] int id)
+        {
+            var item = _context.Products.SingleOrDefault(x => x.Id == id);
+            if (item != null)
+            {
+                string domain = (string)_configuration.GetValue<string>("BackendDomain");
+                ProductEditDTO product = new ProductEditDTO()
+                {
+                    Id = item.Id,
+                    price = item.Price.ToString(),
+                    title = item.Name,
+                    url = $"{domain}android/{item.Image}"
+                };
+                return Ok(product);
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    invalid = "Не знайдено по даному id"
+                });
+            }
+        }
+
+        [HttpPost("edit")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Edit([FromBody]ProductEditDTO model)
+        {
+            var item = _context.Products.SingleOrDefault(x => x.Id == model.Id);
+            if (item != null)
+            {
+                if (model.imageBase64 != null)
+                {
+                    var imageName = item.Image;
+                    string savePath = _env.ContentRootPath;
+                    string folderImage = "images";
+                    savePath = Path.Combine(savePath, folderImage);
+                    savePath = Path.Combine(savePath, imageName);
+                    try
+                    {
+                        byte[] byteBuffer = Convert.FromBase64String(model.imageBase64);
+                        using (MemoryStream memoryStream = new MemoryStream(byteBuffer))
+                        {
+                            memoryStream.Position = 0;
+                            using (Image imgReturn = Image.FromStream(memoryStream))
+                            {
+                                memoryStream.Close();
+                                byteBuffer = null;
+                                var bmp = new Bitmap(imgReturn);
+                                bmp.Save(savePath, ImageFormat.Jpeg);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        return BadRequest(new
+                        {
+                            invalid = "Помилка обробки фото"
+                        });
+                    }
+                }
+                double price = 0;
+                bool successfullyParsed = double.TryParse(model.price, out price);
+                if (successfullyParsed)
+                {
+                    item.Price = price;
+                    item.Name = model.title;
+
+                    //_context.Entry(item).State = EntityState.Modified;
+                    _context.SaveChanges();
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        invalid = "Не вірний тип данних"
+                    });
+                }
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    invalid = "Не знайдено по даному id"
+                });
+            }
         }
 
     }
