@@ -40,13 +40,13 @@ namespace MasterLock.Entities
 
             for (int i = 0; i < 30; i++)
             {
-                string email = "supernikd"+ i.ToString() + "@gmail.com" ;
+                string email = "admin"+ i.ToString() + "@gmail.com" ;
               //  if (userManager.FindByEmailAsync(email).Result == null)
                // {
                     var user = new DbUser
                     {
                         Email = email,
-                        UserName = i.ToString() + email,
+                        UserName = email,
                         Name = "Nikita" + i.ToString(),
                         Surname = "Kaida" + i.ToString(),
                         Country = "Ukraine",

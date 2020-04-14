@@ -34,6 +34,7 @@ namespace MasterLock.Controllers
             _env = env;
             _configuration = configuration;
         }
+        [AllowAnonymous]
         public IActionResult GetAll()
         {
             string domain = (string)_configuration.GetValue<string>("BackendDomain");
