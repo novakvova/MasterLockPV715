@@ -12,6 +12,10 @@ namespace MasterLock.DTO
         public string Country { get; set; }
         public string City { get; set; }
         public string Age { get; set; }
+        public string Date { get; set; }
+
+        public string Phone { get; set; }
+        public string Role { get; set; }
         public string Url { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MasterLock.Abstract;
 using MasterLock.DTO;
 using MasterLock.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -22,13 +23,15 @@ namespace Backend.Controllers
         private readonly IJWTTokenService _jwtTokenService;
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _env;
+        private readonly ApplicationDbContext _context;
 
         public AccountController(
             IWebHostEnvironment env,
             IConfiguration configuration,
             UserManager<DbUser> userManager,
             SignInManager<DbUser> signInManager,
-            IJWTTokenService jWTTokenService
+            IJWTTokenService jWTTokenService,
+            ApplicationDbContext context
             )
         {
             this._configuration = configuration;
@@ -36,6 +39,7 @@ namespace Backend.Controllers
             this._userManager = userManager;
             this._signInManager = signInManager;
             this._jwtTokenService = jWTTokenService;
+            this._context = context;
         }
         //[HttpGet]
         ////getAll Users list
@@ -51,6 +55,28 @@ namespace Backend.Controllers
         //{
         //    return "Some User";
         //}
+
+        [Authorize]
+        [HttpGet("profile")]
+        public IActionResult GetUserProfile()
+        {
+            long id = long.Parse(User.Claims.ToList()[0].Value);
+            string domain = (string)_configuration.GetValue<string>("BackendDomain");
+            var user = _context.Users.
+                Select(u => new
+                {
+                    u.Id,
+                    u.Email,
+                    Image = $"{domain}android/{u.Url}",
+                    Name = $"{u.Name} {u.Surname}",
+                    u.PhoneNumber
+                })
+                .SingleOrDefault(x => x.Id == id);
+
+            return Ok(user);
+
+        }
+
 
         // Login method
         [HttpPost]

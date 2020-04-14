@@ -38,24 +38,30 @@ namespace MasterLock.Entities
                 }).Result;
             }
 
-            if (userManager.FindByEmailAsync("admin@gmail.com").Result == null)
+            for (int i = 0; i < 30; i++)
             {
-                string email = "admin@gmail.com";
-                var user = new DbUser
-                {
-                    Email = email,
-                    UserName = email,
-                    Name = "Nikita",
-                    Surname = "Kaida",
-                    Country = "Ukraine",
-                    City = "Rivne",
-                    Age = "18",
-                    Url = "http://st03.kakprosto.ru//images/article/2018/10/30/340157_5bd89b73dec2d5bd89b73dec67.jpeg",
-                    PhoneNumber = "+11(111)111-11-11"
-                };
-                var result = userManager.CreateAsync(user, "Qwerty1-").Result;
-                result = userManager.AddToRoleAsync(user, roleName).Result;
-            }
+                string email = "admin"+ i.ToString() + "@gmail.com" ;
+              //  if (userManager.FindByEmailAsync(email).Result == null)
+               // {
+                    var user = new DbUser
+                    {
+                        Email = email,
+                        UserName = email,
+                        Name = "Nikita" + i.ToString(),
+                        Surname = "Kaida" + i.ToString(),
+                        Country = "Ukraine",
+                        City = "Rivne",
+                      //  StringRole = "Admin",
+                        Date = "18/03/" + (1990 + i).ToString(),
+                        Age = "18",
+                        Url = "http://st03.kakprosto.ru//images/article/2018/10/30/340157_5bd89b73dec2d5bd89b73dec67.jpeg",
+                        PhoneNumber = "38097"+(i%2).ToString()+(i%3).ToString()+"30877"
+                    };
+                    var result = userManager.CreateAsync(user, "Qwerty1-").Result;
+                    result = userManager.AddToRoleAsync(user, roleName).Result;
+               // }
+            }            
+            //}
         }
         private static void SeedProduct(ApplicationDbContext context)
         {

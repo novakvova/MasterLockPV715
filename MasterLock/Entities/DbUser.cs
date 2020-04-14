@@ -13,6 +13,8 @@ namespace MasterLock.Entities
         public string Country { get; set; }
         public string City { get; set; }
         public string Age { get; set; }
+        public string Date { get; set; }
+       // public string StringRole { get; set; }
         public string Url { get; set; }
         public ICollection<DbUserRole> UserRoles { get; set; }
     }
