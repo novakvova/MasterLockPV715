@@ -54,7 +54,7 @@ namespace MasterLock.Entities
                       //  StringRole = "Admin",
                         Date = "18/03/" + (1990 + i).ToString(),
                         Age = "18",
-                        Url = "http://st03.kakprosto.ru//images/article/2018/10/30/340157_5bd89b73dec2d5bd89b73dec67.jpeg",
+                        Url = "1.jpg",
                         PhoneNumber = "38097"+(i%2).ToString()+(i%3).ToString()+"30877"
                     };
                     var result = userManager.CreateAsync(user, "Qwerty1-").Result;
